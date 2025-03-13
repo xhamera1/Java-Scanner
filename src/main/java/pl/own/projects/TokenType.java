@@ -21,7 +21,7 @@ public enum TokenType {
     // Operatory arytmetyczne
     OPERATOR_PLUS,              // +
     OPERATOR_MINUS,             // -
-    OPERATOR_MNOŻENIA,          // *
+    OPERATOR_MNOZENIA,          // *
     OPERATOR_DZIELENIA,         // /
     OPERATOR_MODULO,            // %
     OPERATOR_INKREMENTACJI,     // ++
@@ -30,24 +30,24 @@ public enum TokenType {
     // Operatory przypisania
     OPERATOR_PRZYPISANIA,                   // =
     OPERATOR_DODANIA_PRZYPISANIA,           // +=
-    OPERATOR_ODJĘCIA_PRZYPISANIA,           // -=
-    OPERATOR_MNOŻENIA_PRZYPISANIA,          // *=
+    OPERATOR_ODJECIA_PRZYPISANIA,           // -=
+    OPERATOR_MNOZENIA_PRZYPISANIA,          // *=
     OPERATOR_DZIELENIA_PRZYPISANIA,         // /=
     OPERATOR_MODULO_PRZYPISANIA,            // %=
     OPERATOR_BITOWE_I_PRZYPISANIA,          // &=
     OPERATOR_BITOWE_LUB_PRZYPISANIA,        // |=
     OPERATOR_BITOWE_XOR_PRZYPISANIA,        // ^=
-    OPERATOR_PRZESUNIĘCIA_W_LEWO_PRZYPISANIA, // <<=
-    OPERATOR_PRZESUNIĘCIA_W_PRAWO_PRZYPISANIA,// >>=
-    OPERATOR_PRZESUNIĘCIA_BEZ_ZNAKU_PRZYPISANIA, // >>>=
+    OPERATOR_PRZESUNIECIA_W_LEWO_PRZYPISANIA, // <<=
+    OPERATOR_PRZESUNIECIA_W_PRAWO_PRZYPISANIA,// >>=
+    OPERATOR_PRZESUNIECIA_BEZ_ZNAKU_PRZYPISANIA, // >>>=
 
     // Operatory porównania
-    OPERATOR_RÓWNOŚCI,         // ==
-    OPERATOR_NIERÓWNOŚCI,      // !=
-    OPERATOR_MNIŻSZE,          // <
-    OPERATOR_WIĘKSZE,          // >
-    OPERATOR_MNIŻSZE_LUB_RÓWNO, // <=
-    OPERATOR_WIĘKSZE_LUB_RÓWNO,  // >=
+    OPERATOR_ROWNOSCI,         // ==
+    OPERATOR_NIEROWNOSCI,      // !=
+    OPERATOR_MNIEJSZE,          // <
+    OPERATOR_WIEKSZE,          // >
+    OPERATOR_MNIEJSZE_LUB_ROWNE, // <=
+    OPERATOR_WIEKSZE_LUB_ROWNE,  // >=
 
     // Operatory logiczne
     OPERATOR_LOGICZNE_I,       // &&
@@ -59,18 +59,18 @@ public enum TokenType {
     OPERATOR_BITOWE_I,         // &
     OPERATOR_BITOWE_LUB,       // |
     OPERATOR_BITOWE_XOR,       // ^
-    OPERATOR_PRZESUNIĘCIA_W_LEWO,  // <<
-    OPERATOR_PRZESUNIĘCIA_W_PRAWO, // >>
-    OPERATOR_PRZESUNIĘCIA_BEZ_ZNAKU, // >>>
+    OPERATOR_PRZESUNIECIA_W_LEWO,  // <<
+    OPERATOR_PRZESUNIECIA_W_PRAWO, // >>
+    OPERATOR_PRZESUNIECIA_BEZ_ZNAKU, // >>>
 
     // Separatory (znaki interpunkcyjne)
-    NAWIAS_OKRĄGŁY_OTWARCIE,   // (
-    NAWIAS_OKRĄGŁY_ZAMKNIĘCIE,  // )
-    NAWIAS_KLAMKOWY_OTWARCIE,   // {
-    NAWIAS_KLAMKOWY_ZAMKNIĘCIE,  // }
+    NAWIAS_OKRAGLY_OTWARCIE,   // (
+    NAWIAS_OKRAGLY_ZAMKNIECIE,  // )
+    NAWIAS_KLAMROWY_OTWARCIE,   // {
+    NAWIAS_KLAMROWY_ZAMKNIECIE,  // }
     NAWIAS_KWADRATOWY_OTWARCIE, // [
-    NAWIAS_KWADRATOWY_ZAMKNIĘCIE, // ]
-    ŚREDNIK,                  // ;
+    NAWIAS_KWADRATOWY_ZAMKNIECIE, // ]
+    SREDNIK,                  // ;
     PRZECINEK,                // ,
     KROPKA,                   // .
     TRZY_KROPKI,              // ... (np. dla varargs)
