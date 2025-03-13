@@ -16,7 +16,7 @@ public enum TokenType {
     LITERA_NULL,                        // null
 
     // Słowa kluczowe
-    SŁOWO_KLUCZOWE,
+    SLOWO_KLUCZOWE,
 
     // Operatory arytmetyczne
     OPERATOR_PLUS,              // +
