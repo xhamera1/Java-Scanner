@@ -1,5 +1,6 @@
 package pl.own.projects;
 
+@SuppressWarnings("ALL")
 public enum TokenType {
     /**
      * Identyfikator – nazwa zmiennej, metody, klasy itp.
@@ -80,6 +81,4 @@ public enum TokenType {
     KOMENTARZ_WIELOLINIOWY,     // /* ... */
     KOMENTARZ_DOKUMENTACYJNY,  // /** ... */
 
-    // Specjalny token oznaczający koniec pliku
-    KONIEC_PLIKU
 }
