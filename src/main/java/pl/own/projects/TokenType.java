@@ -2,12 +2,7 @@ package pl.own.projects;
 
 @SuppressWarnings("ALL")
 public enum TokenType {
-    /**
-     * Identyfikator – nazwa zmiennej, metody, klasy itp.
-     * Może zawierać litery, cyfry (ale nie na początku), znak podkreślenia '_' i '$'.
-     * Przykłady: a1, _var2, $count, Main
-     */
-    IDENTYFIKATOR,
+    IDENTYFIKATOR,                      // Przykłady: a1, _var2, $count, Main    // nazwa zmiennej, metody, klasy itp.
     LICZBA_CALKOWITA,                   // tylko nieujemne np: 0, 123, 42
     LICZBA_CALKOWITA_SZESNASTKOWA,      // Przykłady: 0xFA, 0X1A, 0x10
     LICZBA_CALKOWITA_OKTALNA,           // Przykłady: 0123
@@ -18,6 +13,8 @@ public enum TokenType {
 
     // Słowa kluczowe
     SLOWO_KLUCZOWE,
+
+    NAZWA_WLASNA,         // np. "HelloWorld"
 
     // Operatory arytmetyczne
     OPERATOR_PLUS,              // +
@@ -40,7 +37,7 @@ public enum TokenType {
     OPERATOR_BITOWE_XOR_PRZYPISANIA,        // ^=
     OPERATOR_PRZESUNIECIA_W_LEWO_PRZYPISANIA, // <<=
     OPERATOR_PRZESUNIECIA_W_PRAWO_PRZYPISANIA,// >>=
-    OPERATOR_PRZESUNIECIA_BEZ_ZNAKU_PRZYPISANIA, // >>>=
+
 
     // Operatory porównania
     OPERATOR_ROWNOSCI,         // ==
@@ -62,7 +59,6 @@ public enum TokenType {
     OPERATOR_BITOWE_XOR,       // ^
     OPERATOR_PRZESUNIECIA_W_LEWO,  // <<
     OPERATOR_PRZESUNIECIA_W_PRAWO, // >>
-    OPERATOR_PRZESUNIECIA_BEZ_ZNAKU, // >>>
 
     // Separatory (znaki interpunkcyjne)
     NAWIAS_OKRAGLY_OTWARCIE,   // (
@@ -76,9 +72,12 @@ public enum TokenType {
     KROPKA,                   // .
     TRZY_KROPKI,              // ... (np. dla varargs)
 
+
     // Komentarze
     KOMENTARZ_JEDNOLINIOWY,    // // komentarz
-    KOMENTARZ_WIELOLINIOWY,     // /* ... */
-    KOMENTARZ_DOKUMENTACYJNY,  // /** ... */
+    KOMENTARZ_WIELOLINIOWY_POCZATEK, // /*
+    KOMENTARZ_WIELOLINIOWY_LUB_DOKUMENTACYJNY_KONIEC,  // */
+    KOMENTARZ_DOKUMENTACYJNY_POCZATEK,  // /** ... */
+
 
 }

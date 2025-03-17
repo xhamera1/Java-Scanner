@@ -1,10 +1,7 @@
 package pl.own.projects;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,11 +42,195 @@ public class MyScanner {
             } else {
                 return handleDecimalOrFloat(String.valueOf(currChar));
             }
-        }
-        else if(Character.isLetter(currChar) || currChar == '_' || currChar == '$') {
+        } else if (Character.isLetter(currChar) || currChar == '_' || currChar == '$') {
             return handleIdentifierOrKeyword(String.valueOf(currChar));
+        } else if (currChar == '=') {
+            if (checkNextChar() == '=') {
+                getNextChar();
+                return new Token(TokenType.OPERATOR_ROWNOSCI, "==");
+            }
+            return new Token(TokenType.OPERATOR_PRZYPISANIA, "=");
+        } else if (currChar == '+') {
+            if (checkNextChar() == '+') {
+                getNextChar();
+                return new Token(TokenType.OPERATOR_INKREMENTACJI, "++");
+            } else if (checkNextChar() == '=') {
+                getNextChar();
+                return new Token(TokenType.OPERATOR_DODANIA_PRZYPISANIA, "+=");
+            }
+            return new Token(TokenType.OPERATOR_PLUS, "+");
+        } else if (currChar == '-') {
+            if (checkNextChar() == '-') {
+                getNextChar();
+                return new Token(TokenType.OPERATOR_DEKREMENTACJI, "--");
+            } else if (checkNextChar() == '=') {
+                getNextChar();
+                return new Token(TokenType.OPERATOR_ODJECIA_PRZYPISANIA, "-=");
+            }
+            return new Token(TokenType.OPERATOR_MINUS, "-");
+        } else if (currChar == '*') {
+            if (checkNextChar() == '=') {
+                getNextChar();
+                return new Token(TokenType.OPERATOR_MNOZENIA_PRZYPISANIA, "*=");
+            }
+            else if (checkNextChar() == '/') {
+                getNextChar();
+                return new Token(TokenType.KOMENTARZ_WIELOLINIOWY_LUB_DOKUMENTACYJNY_KONIEC, "*/");
+            }
+            return new Token(TokenType.OPERATOR_MNOZENIA, "*");
         }
+        else if (currChar == '/') {
+            if (checkNextChar() == '=') {
+                getNextChar();
+                return new Token(TokenType.OPERATOR_DZIELENIA_PRZYPISANIA, "/=");
+            }
+            else if (checkNextChar() == '/') {
+                getNextChar();
+                matchPatternFromCurrentPosition(Pattern.compile(".*"));
+                return new Token(TokenType.KOMENTARZ_JEDNOLINIOWY, "//");
+            }
+            else if (checkNextChar() == '*') {
+                getNextChar();
+                if (checkNextChar() == '*') {
+                    getNextChar();
+                    return new Token(TokenType.KOMENTARZ_DOKUMENTACYJNY_POCZATEK, "/**");
+                }
+                skipMultiLineComment();
+                return new Token(TokenType.KOMENTARZ_WIELOLINIOWY_POCZATEK, "/*");
+            }
+            return new Token(TokenType.OPERATOR_DZIELENIA, "/");
+        } else if (currChar == '%') {
+            if (checkNextChar() == '=') {
+                getNextChar();
+                return new Token(TokenType.OPERATOR_MODULO_PRZYPISANIA, "%=");
+            }
+            return new Token(TokenType.OPERATOR_MODULO, "%");
+        } else if (currChar == '&') {
+            if (checkNextChar() == '=') {
+                getNextChar();
+                return new Token(TokenType.OPERATOR_BITOWE_I_PRZYPISANIA, "&=");
+            }
+            if (checkNextChar() == '&') {
+                getNextChar();
+                return new Token(TokenType.OPERATOR_LOGICZNE_I, "&&");
+            }
+            return new Token(TokenType.OPERATOR_BITOWE_I, "&");
+        } else if (currChar == '|') {
+            if (checkNextChar() == '=') {
+                getNextChar();
+                return new Token(TokenType.OPERATOR_BITOWE_LUB_PRZYPISANIA, "|=");
+            }
+            if (checkNextChar() == '|') {
+                getNextChar();
+                return new Token(TokenType.OPERATOR_LOGICZNE_LUB, "||");
+            }
+            return new Token(TokenType.OPERATOR_BITOWE_LUB, "|");
+        } else if (currChar == '^') {
+            if (checkNextChar() == '=') {
+                getNextChar();
+                return new Token(TokenType.OPERATOR_BITOWE_XOR_PRZYPISANIA, "^=");
+            }
+            return new Token(TokenType.OPERATOR_BITOWE_XOR, "^");
+        } else if (currChar == '!') {
+            if (checkNextChar() == '=') {
+                getNextChar();
+                return new Token(TokenType.OPERATOR_NIEROWNOSCI, "!=");
+            }
+            return new Token(TokenType.OPERATOR_NEGACJI, "!");
+        } else if (currChar == '~') {
+            return new Token(TokenType.OPERATOR_BITOWE_NEGACJI, "~");
+        } else if (currChar == '<') {
+            if (checkNextChar() == '<') {
+                if (checkNextChar() == '=') {
+                    getNextChar();
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_PRZESUNIECIA_W_LEWO_PRZYPISANIA, "<<=");
+                }
+                getNextChar();
+                return new Token(TokenType.OPERATOR_PRZESUNIECIA_W_LEWO, "<<");
+            } else if (checkNextChar() == '=') {
+                getNextChar();
+                return new Token(TokenType.OPERATOR_MNIEJSZE_LUB_ROWNE, "<=");
+            }
+            return new Token(TokenType.OPERATOR_MNIEJSZE, "<");
+        } else if (currChar == '>') {
+            if (checkNextChar() == '>') {
+                if (checkNextChar() == '=') {
+                    getNextChar();
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_PRZESUNIECIA_W_PRAWO_PRZYPISANIA, ">>=");
+                }
+                getNextChar();
+                return new Token(TokenType.OPERATOR_PRZESUNIECIA_W_PRAWO, ">>");
+            } else if (checkNextChar() == '=') {
+                getNextChar();
+                return new Token(TokenType.OPERATOR_WIEKSZE_LUB_ROWNE, ">=");
+            }
+            return new Token(TokenType.OPERATOR_WIEKSZE, ">");
+        } else if (currChar == '(') {
+            return new Token(TokenType.NAWIAS_OKRAGLY_OTWARCIE, "(");
+        } else if (currChar == ')') {
+            return new Token(TokenType.NAWIAS_OKRAGLY_ZAMKNIECIE, ")");
+        } else if (currChar == '{') {
+            return new Token(TokenType.NAWIAS_KLAMROWY_OTWARCIE, "{");
+        } else if (currChar == '}') {
+            return new Token(TokenType.NAWIAS_KLAMROWY_ZAMKNIECIE, "}");
+        } else if (currChar == '[') {
+            return new Token(TokenType.NAWIAS_KWADRATOWY_OTWARCIE, "[");
+        } else if (currChar == ']') {
+            return new Token(TokenType.NAWIAS_KWADRATOWY_ZAMKNIECIE, "]");
+        } else if (currChar == ';') {
+            return new Token(TokenType.SREDNIK, ";");
+        } else if (currChar == ',') {
+            return new Token(TokenType.PRZECINEK, ",");
+        } else if (currChar == '.') {
+            char nextChar = checkNextChar();
+            if (nextChar == '.') {
+                getNextChar();
+                char nextNextChar = checkNextNextChar();
+                if (nextNextChar == '.') {
+                    getNextChar();
+                    return new Token(TokenType.TRZY_KROPKI, "...");
+                }
+            }
+            return new Token(TokenType.KROPKA, ".");
+        }
+        else if (currChar == '"') {
+            StringBuilder sb = new StringBuilder();
+            while (true) {
+                currChar = getNextChar();
+                if (currChar == '"') {
+                    break;
+                }
+                else {
+                    sb.append(currChar);
+                }
+            }
+            return new Token(TokenType.NAZWA_WLASNA, "\"" + sb.toString() + "\"");
+        }
+
         throw new MyScannerException("Nieznany token rozpoczynajacy sie znakiem: " + currChar);
+    }
+
+    private Token handleIdentifierOrKeyword(String s) throws MyScannerException{
+        StringBuilder sb = new StringBuilder(s);
+        Pattern restPattern = Pattern.compile("[0-9a-zA-Z_$]*");
+        String rest = matchPatternFromCurrentPosition(restPattern);
+        sb.append(rest);
+        String word = sb.toString();
+        if (word.equals("true") || word.equals("false") ){
+            return new Token(TokenType.LITERA_BOOLEAN, word);
+        }
+        else if (KEYWORDS.contains(word)) {
+            return new Token(TokenType.SLOWO_KLUCZOWE, word);
+        }
+        else if (word.equals("null")) {
+            return new Token(TokenType.LITERA_NULL, word);
+        }
+        else return new Token(TokenType.IDENTYFIKATOR, word);
+
+
+
     }
 
     private Token handleStartsWithZero() throws MyScannerException {
@@ -199,6 +380,17 @@ public class MyScanner {
         return line.charAt(currentLinePosition);
     }
 
+    private char checkNextNextChar() throws MyScannerException {
+        if (currentLineNumber >= this.lines.size()) {
+            throw new MyScannerException("No more characters in file");
+        }
+        String line = lines.get(currentLineNumber);
+        if (currentLinePosition + 1 >= line.length()) {
+            return '\n';
+        }
+        return line.charAt(currentLinePosition + 1);
+    }
+
     public boolean hasNextToken(){
         while (currentLineNumber < lines.size()) {
             String currentLine = lines.get(currentLineNumber);
@@ -215,6 +407,16 @@ public class MyScanner {
             return true;
         }
         return false;
+    }
+
+    private void skipMultiLineComment() throws MyScannerException {
+        while (true) {
+            char currChar = getNextChar();
+            if (currChar == '*' && checkNextChar() == '/') {
+                getNextChar();
+                break;
+            }
+        }
     }
 
 
