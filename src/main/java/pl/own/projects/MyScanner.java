@@ -34,182 +34,219 @@ public class MyScanner {
         if (!hasNextToken()) {
             return null;
         }
+
         char currChar = getNextChar();
 
         if (Character.isDigit(currChar)) {
-            if (currChar == '0') {
-                return handleStartsWithZero();
-            } else {
-                return handleDecimalOrFloat(String.valueOf(currChar));
-            }
-        } else if (Character.isLetter(currChar) || currChar == '_' || currChar == '$') {
-            return handleIdentifierOrKeyword(String.valueOf(currChar));
-        } else if (currChar == '=') {
-            if (checkNextChar() == '=') {
-                getNextChar();
-                return new Token(TokenType.OPERATOR_ROWNOSCI, "==");
-            }
-            return new Token(TokenType.OPERATOR_PRZYPISANIA, "=");
-        } else if (currChar == '+') {
-            if (checkNextChar() == '+') {
-                getNextChar();
-                return new Token(TokenType.OPERATOR_INKREMENTACJI, "++");
-            } else if (checkNextChar() == '=') {
-                getNextChar();
-                return new Token(TokenType.OPERATOR_DODANIA_PRZYPISANIA, "+=");
-            }
-            return new Token(TokenType.OPERATOR_PLUS, "+");
-        } else if (currChar == '-') {
-            if (checkNextChar() == '-') {
-                getNextChar();
-                return new Token(TokenType.OPERATOR_DEKREMENTACJI, "--");
-            } else if (checkNextChar() == '=') {
-                getNextChar();
-                return new Token(TokenType.OPERATOR_ODJECIA_PRZYPISANIA, "-=");
-            }
-            return new Token(TokenType.OPERATOR_MINUS, "-");
-        } else if (currChar == '*') {
-            if (checkNextChar() == '=') {
-                getNextChar();
-                return new Token(TokenType.OPERATOR_MNOZENIA_PRZYPISANIA, "*=");
-            }
-            else if (checkNextChar() == '/') {
-                getNextChar();
-                return new Token(TokenType.KOMENTARZ_WIELOLINIOWY_LUB_DOKUMENTACYJNY_KONIEC, "*/");
-            }
-            return new Token(TokenType.OPERATOR_MNOZENIA, "*");
+            return parseNumber(currChar);
         }
-        else if (currChar == '/') {
-            if (checkNextChar() == '=') {
-                getNextChar();
-                return new Token(TokenType.OPERATOR_DZIELENIA_PRZYPISANIA, "/=");
-            }
-            else if (checkNextChar() == '/') {
-                getNextChar();
-                matchPatternFromCurrentPosition(Pattern.compile(".*"));
-                return new Token(TokenType.KOMENTARZ_JEDNOLINIOWY, "//");
-            }
-            else if (checkNextChar() == '*') {
-                getNextChar();
-                if (checkNextChar() == '*') {
-                    getNextChar();
-                    return new Token(TokenType.KOMENTARZ_DOKUMENTACYJNY_POCZATEK, "/**");
-                }
-                skipMultiLineComment();
-                return new Token(TokenType.KOMENTARZ_WIELOLINIOWY_POCZATEK, "/*");
-            }
-            return new Token(TokenType.OPERATOR_DZIELENIA, "/");
-        } else if (currChar == '%') {
-            if (checkNextChar() == '=') {
-                getNextChar();
-                return new Token(TokenType.OPERATOR_MODULO_PRZYPISANIA, "%=");
-            }
-            return new Token(TokenType.OPERATOR_MODULO, "%");
-        } else if (currChar == '&') {
-            if (checkNextChar() == '=') {
-                getNextChar();
-                return new Token(TokenType.OPERATOR_BITOWE_I_PRZYPISANIA, "&=");
-            }
-            if (checkNextChar() == '&') {
-                getNextChar();
-                return new Token(TokenType.OPERATOR_LOGICZNE_I, "&&");
-            }
-            return new Token(TokenType.OPERATOR_BITOWE_I, "&");
-        } else if (currChar == '|') {
-            if (checkNextChar() == '=') {
-                getNextChar();
-                return new Token(TokenType.OPERATOR_BITOWE_LUB_PRZYPISANIA, "|=");
-            }
-            if (checkNextChar() == '|') {
-                getNextChar();
-                return new Token(TokenType.OPERATOR_LOGICZNE_LUB, "||");
-            }
-            return new Token(TokenType.OPERATOR_BITOWE_LUB, "|");
-        } else if (currChar == '^') {
-            if (checkNextChar() == '=') {
-                getNextChar();
-                return new Token(TokenType.OPERATOR_BITOWE_XOR_PRZYPISANIA, "^=");
-            }
-            return new Token(TokenType.OPERATOR_BITOWE_XOR, "^");
-        } else if (currChar == '!') {
-            if (checkNextChar() == '=') {
-                getNextChar();
-                return new Token(TokenType.OPERATOR_NIEROWNOSCI, "!=");
-            }
-            return new Token(TokenType.OPERATOR_NEGACJI, "!");
-        } else if (currChar == '~') {
-            return new Token(TokenType.OPERATOR_BITOWE_NEGACJI, "~");
-        } else if (currChar == '<') {
-            if (checkNextChar() == '<') {
-                if (checkNextChar() == '=') {
-                    getNextChar();
-                    getNextChar();
-                    return new Token(TokenType.OPERATOR_PRZESUNIECIA_W_LEWO_PRZYPISANIA, "<<=");
-                }
-                getNextChar();
-                return new Token(TokenType.OPERATOR_PRZESUNIECIA_W_LEWO, "<<");
-            } else if (checkNextChar() == '=') {
-                getNextChar();
-                return new Token(TokenType.OPERATOR_MNIEJSZE_LUB_ROWNE, "<=");
-            }
-            return new Token(TokenType.OPERATOR_MNIEJSZE, "<");
-        } else if (currChar == '>') {
-            if (checkNextChar() == '>') {
-                if (checkNextChar() == '=') {
-                    getNextChar();
-                    getNextChar();
-                    return new Token(TokenType.OPERATOR_PRZESUNIECIA_W_PRAWO_PRZYPISANIA, ">>=");
-                }
-                getNextChar();
-                return new Token(TokenType.OPERATOR_PRZESUNIECIA_W_PRAWO, ">>");
-            } else if (checkNextChar() == '=') {
-                getNextChar();
-                return new Token(TokenType.OPERATOR_WIEKSZE_LUB_ROWNE, ">=");
-            }
-            return new Token(TokenType.OPERATOR_WIEKSZE, ">");
-        } else if (currChar == '(') {
-            return new Token(TokenType.NAWIAS_OKRAGLY_OTWARCIE, "(");
-        } else if (currChar == ')') {
-            return new Token(TokenType.NAWIAS_OKRAGLY_ZAMKNIECIE, ")");
-        } else if (currChar == '{') {
-            return new Token(TokenType.NAWIAS_KLAMROWY_OTWARCIE, "{");
-        } else if (currChar == '}') {
-            return new Token(TokenType.NAWIAS_KLAMROWY_ZAMKNIECIE, "}");
-        } else if (currChar == '[') {
-            return new Token(TokenType.NAWIAS_KWADRATOWY_OTWARCIE, "[");
-        } else if (currChar == ']') {
-            return new Token(TokenType.NAWIAS_KWADRATOWY_ZAMKNIECIE, "]");
-        } else if (currChar == ';') {
-            return new Token(TokenType.SREDNIK, ";");
-        } else if (currChar == ',') {
-            return new Token(TokenType.PRZECINEK, ",");
-        } else if (currChar == '.') {
-            char nextChar = checkNextChar();
-            if (nextChar == '.') {
-                getNextChar();
-                char nextNextChar = checkNextNextChar();
-                if (nextNextChar == '.') {
-                    getNextChar();
-                    return new Token(TokenType.TRZY_KROPKI, "...");
-                }
-            }
-            return new Token(TokenType.KROPKA, ".");
+        else if (Character.isLetter(currChar) || currChar == '_' || currChar == '$') {
+            return handleIdentifierOrKeyword(String.valueOf(currChar));
         }
         else if (currChar == '"') {
-            StringBuilder sb = new StringBuilder();
-            while (true) {
-                currChar = getNextChar();
-                if (currChar == '"') {
-                    break;
-                }
-                else {
-                    sb.append(currChar);
-                }
-            }
-            return new Token(TokenType.NAZWA_WLASNA, "\"" + sb.toString() + "\"");
+            return parseStringLiteral();
         }
+        else {
+            return parseOperatorOrSymbol(currChar);
+        }
+    }
 
-        throw new MyScannerException("Nieznany token rozpoczynajacy sie znakiem: " + currChar);
+
+    private Token parseNumber(char firstDigit) throws MyScannerException {
+        if (firstDigit == '0') {
+            return handleStartsWithZero();
+        } else {
+            return handleDecimalOrFloat(String.valueOf(firstDigit));
+        }
+    }
+
+    private Token parseStringLiteral() throws MyScannerException {
+        StringBuilder sb = new StringBuilder();
+        while (true) {
+            char currChar = getNextChar();
+            if (currChar == '"') {
+                break;
+            } else {
+                sb.append(currChar);
+            }
+        }
+        return new Token(TokenType.NAZWA_WLASNA, "\"" + sb.toString() + "\"");
+    }
+
+
+    private Token parseOperatorOrSymbol(char currChar) throws MyScannerException {
+        switch (currChar) {
+            case '=':
+                if (checkNextChar() == '=') {
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_ROWNOSCI, "==");
+                }
+                return new Token(TokenType.OPERATOR_PRZYPISANIA, "=");
+
+            case '+':
+                if (checkNextChar() == '+') {
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_INKREMENTACJI, "++");
+                } else if (checkNextChar() == '=') {
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_DODANIA_PRZYPISANIA, "+=");
+                }
+                return new Token(TokenType.OPERATOR_PLUS, "+");
+
+            case '-':
+                if (checkNextChar() == '-') {
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_DEKREMENTACJI, "--");
+                } else if (checkNextChar() == '=') {
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_ODJECIA_PRZYPISANIA, "-=");
+                }
+                return new Token(TokenType.OPERATOR_MINUS, "-");
+
+            case '*':
+                if (checkNextChar() == '=') {
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_MNOZENIA_PRZYPISANIA, "*=");
+                } else if (checkNextChar() == '/') {
+                    getNextChar();
+                    return new Token(TokenType.KOMENTARZ_WIELOLINIOWY_LUB_DOKUMENTACYJNY_KONIEC, "*/");
+                }
+                return new Token(TokenType.OPERATOR_MNOZENIA, "*");
+
+            case '/':
+                if (checkNextChar() == '=') {
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_DZIELENIA_PRZYPISANIA, "/=");
+                } else if (checkNextChar() == '/') {
+                    getNextChar();
+                    matchPatternFromCurrentPosition(Pattern.compile(".*"));
+                    return new Token(TokenType.KOMENTARZ_JEDNOLINIOWY, "//");
+                } else if (checkNextChar() == '*') {
+                    getNextChar();
+                    if (checkNextChar() == '*') {
+                        getNextChar();
+                        return new Token(TokenType.KOMENTARZ_DOKUMENTACYJNY_POCZATEK, "/**");
+                    }
+                    skipMultiLineComment();
+                    return new Token(TokenType.KOMENTARZ_WIELOLINIOWY_POCZATEK, "/*");
+                }
+                return new Token(TokenType.OPERATOR_DZIELENIA, "/");
+
+            case '%':
+                if (checkNextChar() == '=') {
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_MODULO_PRZYPISANIA, "%=");
+                }
+                return new Token(TokenType.OPERATOR_MODULO, "%");
+
+            case '&':
+                if (checkNextChar() == '=') {
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_BITOWE_I_PRZYPISANIA, "&=");
+                }
+                if (checkNextChar() == '&') {
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_LOGICZNE_I, "&&");
+                }
+                return new Token(TokenType.OPERATOR_BITOWE_I, "&");
+
+            case '|':
+                if (checkNextChar() == '=') {
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_BITOWE_LUB_PRZYPISANIA, "|=");
+                }
+                if (checkNextChar() == '|') {
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_LOGICZNE_LUB, "||");
+                }
+                return new Token(TokenType.OPERATOR_BITOWE_LUB, "|");
+
+            case '^':
+                if (checkNextChar() == '=') {
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_BITOWE_XOR_PRZYPISANIA, "^=");
+                }
+                return new Token(TokenType.OPERATOR_BITOWE_XOR, "^");
+
+            case '!':
+                if (checkNextChar() == '=') {
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_NIEROWNOSCI, "!=");
+                }
+                return new Token(TokenType.OPERATOR_NEGACJI, "!");
+
+            case '~':
+                return new Token(TokenType.OPERATOR_BITOWE_NEGACJI, "~");
+
+            case '<':
+                if (checkNextChar() == '<') {
+                    if (checkNextChar() == '=') {
+                        getNextChar();
+                        getNextChar();
+                        return new Token(TokenType.OPERATOR_PRZESUNIECIA_W_LEWO_PRZYPISANIA, "<<=");
+                    }
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_PRZESUNIECIA_W_LEWO, "<<");
+                } else if (checkNextChar() == '=') {
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_MNIEJSZE_LUB_ROWNE, "<=");
+                }
+                return new Token(TokenType.OPERATOR_MNIEJSZE, "<");
+
+            case '>':
+                if (checkNextChar() == '>') {
+                    if (checkNextChar() == '=') {
+                        getNextChar();
+                        getNextChar();
+                        return new Token(TokenType.OPERATOR_PRZESUNIECIA_W_PRAWO_PRZYPISANIA, ">>=");
+                    }
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_PRZESUNIECIA_W_PRAWO, ">>");
+                } else if (checkNextChar() == '=') {
+                    getNextChar();
+                    return new Token(TokenType.OPERATOR_WIEKSZE_LUB_ROWNE, ">=");
+                }
+                return new Token(TokenType.OPERATOR_WIEKSZE, ">");
+
+            case '(':
+                return new Token(TokenType.NAWIAS_OKRAGLY_OTWARCIE, "(");
+
+            case ')':
+                return new Token(TokenType.NAWIAS_OKRAGLY_ZAMKNIECIE, ")");
+
+            case '{':
+                return new Token(TokenType.NAWIAS_KLAMROWY_OTWARCIE, "{");
+
+            case '}':
+                return new Token(TokenType.NAWIAS_KLAMROWY_ZAMKNIECIE, "}");
+
+            case '[':
+                return new Token(TokenType.NAWIAS_KWADRATOWY_OTWARCIE, "[");
+
+            case ']':
+                return new Token(TokenType.NAWIAS_KWADRATOWY_ZAMKNIECIE, "]");
+
+            case ';':
+                return new Token(TokenType.SREDNIK, ";");
+
+            case ',':
+                return new Token(TokenType.PRZECINEK, ",");
+
+            case '.':
+                char nextChar = checkNextChar();
+                if (nextChar == '.') {
+                    getNextChar();
+                    char nextNextChar = checkNextNextChar();
+                    if (nextNextChar == '.') {
+                        getNextChar();
+                        return new Token(TokenType.TRZY_KROPKI, "...");
+                    }
+                }
+                return new Token(TokenType.KROPKA, ".");
+
+            default:
+                throw new MyScannerException("Nieznany token rozpoczynajacy sie znakiem: " + currChar);
+        }
     }
 
     private Token handleIdentifierOrKeyword(String s) throws MyScannerException{
